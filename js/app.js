@@ -20,7 +20,6 @@ var gameOver = false;
 
 // Enemies our Player must avoid
 var Enemy = function() {
-
     // Start outside of the canvas
     this.x = Math.floor((Math.random() * -500) + -50);
     // Randomly select a y position from the array declared globally
@@ -28,14 +27,11 @@ var Enemy = function() {
     // Adjust speed randomly
     this.speed = Math.floor(200 + (Math.random() * enemySpeed));
     this.sprite = 'images/enemy-bug.png';
-    this.levelSpeed = levelSpeedDefault;
-
-
 };
 
 Enemy.prototype.update = function(dt) {
     // Updating the speed reletive to delta Time 
-    this.x = this.x + levelSpeedDefault + (this.speed * dt);
+    this.x = this.x + levelSpeed + (this.speed * dt);
 
     // Recycle the Enemy and send them on their way again from a 
     // random y position in the global array  
@@ -100,15 +96,18 @@ Player.prototype.render = function(){
 };
 
 Player.prototype.reset = function() {
+    // Resetting Player position
     player.x = 200;
     player.y = 400;
     var playerScore = player.score;
+    // Are we out of lives?? Then yea lets give the user a message to reflect that
     if(player.lives < 1){
         gameOver = true;
         gameOverTitle = "<h4>Game Over!</h4>";
         gameOverMsg = "<h5>Damn... The chicken managed to cross the road! </h5> <br/><h4> Score: "+playerScore+" </h4>";
         handleModal(gameOverTitle, gameOverMsg);  
     }
+    // Have we reached 5 points to progress to the next level? Then give the user a message to reflect that 
     if(player.score > 4){
         gameOver = true;
         gameOverTitle = "<h4>You got there!</h4>";
@@ -134,16 +133,11 @@ Player.prototype.handleInput = function(allowedKeys) {
     }
 };
 
-
-
-
-
-
-
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 var allEnemies = [];
 
+// Now pushe them into the array, but only 3 of them
 for (var i = 0; i < 3; i++) {
     allEnemies.push(new Enemy(i));
 }
@@ -167,7 +161,7 @@ document.addEventListener('keyup', function(e) {
 });
 
 
-// Game over modal display
+// Display the Bootstrap Model and pass through relevant message 
 function handleModal(modalTitle, modalMsg) {
     $('#myModal').on('shown.bs.modal', function () {
         $('#myModal').find('h4').html(modalTitle);
@@ -177,18 +171,17 @@ function handleModal(modalTitle, modalMsg) {
 
     $('#myModal').modal('show');
 
+    // When closing, do the final checks and update variables
     $('#myModal').on('hidden.bs.modal', function (e) {
         if(player.lives < 1){
             player.level = gameLevelDefault;
             player.lives = 5;
-            levelSpeedDefault = 0;
+            levelSpeed = 0;
         }
         if(player.score > 4){
             player.level ++;
-            levelSpeedDefault ++;
-            gameOver = true;
+            levelSpeed ++;
         }
-        //player.lives = 5;
         player.score = 0;
         gameOver = false;
         console.log(player.x);
