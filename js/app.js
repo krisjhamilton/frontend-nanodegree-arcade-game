@@ -1,4 +1,5 @@
 "use strict";
+
 // Global y positions
 var y = [60, 145, 230, 315];
 
@@ -11,17 +12,20 @@ var gameOverMsg = "";
 
 // Global speed for the enemy
 var enemySpeed = 200;
-// Global speed for each level, 0 being the slowest
+
+// Global enemy speed adjustment for each level, 0 being the slowest
 var levelSpeed = 0;
+
 // Players Bounds
 var playerBounds = 50;
+
 // Global variable to determine state of game
 var gameOver = false;
 
 // Enemies our Player must avoid
 var Enemy = function() {
     // Start outside of the canvas
-    this.x = Math.floor((Math.random() * -500) + -50);
+    this.x = Math.floor((Math.random() * -200) + -50);
     // Randomly select a y position from the array declared globally
     this.y = y[Math.floor((Math.random()* 3))];
     // Adjust speed randomly
@@ -30,7 +34,7 @@ var Enemy = function() {
 };
 
 Enemy.prototype.update = function(dt) {
-    // Updating the speed reletive to delta Time 
+    // Updating the speed reletive to delta Time and the level reached (levelSpeed)
     this.x = this.x + levelSpeed + (this.speed * dt);
 
     // Recycle the Enemy and send them on their way again from a 
@@ -99,19 +103,20 @@ Player.prototype.reset = function() {
     // Resetting Player position
     player.x = 200;
     player.y = 400;
-    var playerScore = player.score;
+    var displayScore = player.score;
+    var displayLevel = player.level;
     // Are we out of lives?? Then yea lets give the user a message to reflect that
     if(player.lives < 1){
         gameOver = true;
         gameOverTitle = "<h4>Game Over!</h4>";
-        gameOverMsg = "<h5>Damn... The chicken managed to cross the road! </h5> <br/><h4> Score: "+playerScore+" </h4>";
+        gameOverMsg = "<h5>Damn... The chicken managed to cross the road! </h5> <br/><h4> Score: "+displayScore+" </h4>";
         handleModal(gameOverTitle, gameOverMsg);  
     }
     // Have we reached 5 points to progress to the next level? Then give the user a message to reflect that 
     if(player.score > 4){
         gameOver = true;
-        gameOverTitle = "<h4>You got there!</h4>";
-        gameOverMsg = "<h5>Boom! Now look at that score! <br/> Next level...</h5>  <br/><h4> Score: "+playerScore+" </h4>";
+        gameOverTitle = "<h4>Boom! You got there!</h4>";
+        gameOverMsg = "<h5>You passed level "+displayLevel+" <br/> Now it is only going to get faster!</h5>";
         handleModal(gameOverTitle, gameOverMsg);  
     }
 };
