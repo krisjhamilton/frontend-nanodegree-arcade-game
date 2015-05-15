@@ -18,4 +18,4 @@ To move the character, simple use the arrow keys on your keyboard.
 * When the 'Level Progression' bar completely fills, the character progresses the next level. As the character progresses through each level, the enemies move faster and faster.
 
 ##### Life
-* The life bar is your life for the entire game session. Every level you pass, the life bar remains the same. When all life is gone, the game is over and the character will need to start again from level one.
+* The life bar represents the characters life for the entire game session. Every level you pass, the life bar remains the same as it was on the previous level. When the character life is empty, the game is over and the character will need to start again from level one... Rinse and repeat
