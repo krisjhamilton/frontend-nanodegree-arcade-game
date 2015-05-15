@@ -7,8 +7,9 @@ var y = [60, 145, 230, 315];
 var playerLivesDefault = 5;
 var gameLevelDefault = 1;
 var playerScoreDefault = 0;
-var gameOverTitle = "";
-var gameOverMsg = "";
+var gameOverTitle = '';
+var gameOverMsg = '';
+var gameButtonText= '';
 
 // Global speed for the enemy
 var enemySpeed = 200;
@@ -37,8 +38,8 @@ Enemy.prototype.update = function(dt) {
     // Updating the speed reletive to delta Time and the level reached (levelSpeed)
     this.x = this.x + levelSpeed + (this.speed * dt);
 
-    // Recycle the Enemy and send them on their way again from a 
-    // random y position in the global array  
+    // Recycle the Enemy and send them on their way again from a
+    // random y position in the global array
     if (this.x > 500) {
         this.reset();
     }
@@ -50,24 +51,15 @@ Enemy.prototype.update = function(dt) {
             player.reset(); //reset player only
         }
     }
-    
-    // Add to Players score when reaching the water
-    if (player.y === -25) {
-        player.score ++;
-        player.reset(); //reset player only
-    }
 };
+
 Enemy.prototype.reset = function() {
     this.x = Math.floor((Math.random() * -100) + -50);
     // Randomly select a y position from the array declared globally
     this.y = y[Math.floor((Math.random()* 3))];
     // Adjust speed randomly
-    this.speed = Math.floor(200 + (Math.random() * enemySpeed));  // speed varibale from 1 to level * 100
+    this.speed = Math.floor(200 + (Math.random() * enemySpeed));
 };
-
-
-        //this.x = -100;
-        //this.y = y[Math.floor(Math.random() * 3)];
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
@@ -86,12 +78,28 @@ var Player = function(x, y) {
 
 Player.prototype.update = function(dt) {
     // Update the players score and lives
-    var displayLives = player.lives;
-    var displayLevel = player.level;
-    var displayScore = player.score;
-    document.getElementById('lives').innerHTML = "Lives : " + displayLives;
-    document.getElementById('level').innerHTML = "Level : " + displayLevel;
-    document.getElementById('score').innerHTML = "Score : " + displayScore;
+    var displayLives = this.lives;
+    var displayLevel = this.level;
+    var displayScore = this.score;
+    document.getElementById('level').innerHTML = 'Level : ' + displayLevel;
+
+    // Decided to change to progress bars instead of labels
+    //document.getElementById('lives').innerHTML = 'Lives : ' + displayLives;
+    //document.getElementById('score').innerHTML = 'Score : ' + displayScore;
+
+    // Find the div's to update
+    var divArrayLife = document.getElementById('progressBarLife');
+    var divArrayScore = document.getElementById('progressBarScore');
+
+    // Set the progress width style
+    divArrayLife.style.width = (displayLives*20)+'%';
+    divArrayScore.style.width = (displayScore*20)+'%';
+
+    // Add to Players score when reaching the water
+    if (this.y === -25) {
+        this.score ++;
+        this.reset(); //reset player only
+    }
 };
 
 // Draw the Player on the screen
@@ -101,23 +109,25 @@ Player.prototype.render = function(){
 
 Player.prototype.reset = function() {
     // Resetting Player position
-    player.x = 200;
-    player.y = 400;
-    var displayScore = player.score;
-    var displayLevel = player.level;
+    this.x = 200;
+    this.y = 400;
+    var displayScore = this.score;
+    var displayLevel = this.level;
     // Are we out of lives?? Then yea lets give the user a message to reflect that
-    if(player.lives < 1){
+    if(this.lives < 1){
         gameOver = true;
-        gameOverTitle = "<h4>Game Over!</h4>";
-        gameOverMsg = "<h5>Damn... The chicken managed to cross the road! </h5> <br/><h4> Score: "+displayScore+" </h4>";
-        handleModal(gameOverTitle, gameOverMsg);  
+        gameButtonText = 'Restart';
+        gameOverTitle = '<h4>Game Over!</h4>';
+        gameOverMsg = '<h5>Damn... The chicken managed to cross the road! </h5> <br/><h4> Score: '+displayScore+' </h4>';
+        handleModal(gameOverTitle, gameOverMsg, gameButtonText);
     }
-    // Have we reached 5 points to progress to the next level? Then give the user a message to reflect that 
-    if(player.score > 4){
+    // Have we reached 5 points to progress to the next level? Then give the user a message to reflect that
+    if(this.score > 4){
         gameOver = true;
-        gameOverTitle = "<h4>Boom! You got there!</h4>";
-        gameOverMsg = "<h5>You passed level "+displayLevel+" <br/> Now it is only going to get faster!</h5>";
-        handleModal(gameOverTitle, gameOverMsg);  
+        gameButtonText = 'Continue';
+        gameOverTitle = '<h4>Boom! You got there!</h4>';
+        gameOverMsg = '<h5>You passed level '+displayLevel+' <br/> Now it is only going to get faster!</h5>';
+        handleModal(gameOverTitle, gameOverMsg, gameButtonText);
     }
 };
 
@@ -165,17 +175,15 @@ document.addEventListener('keyup', function(e) {
     }
 });
 
-
-// Display the Bootstrap Model and pass through relevant message 
-function handleModal(modalTitle, modalMsg) {
+// Display the Bootstrap Model and pass through relevant message
+function handleModal(modalTitle, modalMsg, modalButton) {
     $('#myModal').on('shown.bs.modal', function () {
         $('#myModal').find('h4').html(modalTitle);
         $('#myModal').find('p').html(modalMsg);
+        $('#myModal').find(':button').text(modalButton);
         $('#myInput').focus();
     });
-
     $('#myModal').modal('show');
-
     // When closing, do the final checks and update variables
     $('#myModal').on('hidden.bs.modal', function (e) {
         if(player.lives < 1){
@@ -189,13 +197,5 @@ function handleModal(modalTitle, modalMsg) {
         }
         player.score = 0;
         gameOver = false;
-        console.log(player.x);
     });
 }
-
-
-
-
-
-
-
