@@ -2,7 +2,7 @@
 
 ### Summary
 
-The purpose of this game is to navigate the character to the water at the top of the level without getting hit by the enemies. Rinse and Repeat to progress to the next level.
+The purpose of this game is to navigate the character to the water at the top of the level without getting hit by the enemies. Rinse and repeat to progress to the next level.
 
 
 ### Controls
